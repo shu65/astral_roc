@@ -15,17 +15,21 @@ from Bio.Alphabet import IUPAC
 from src.lib.astral_utility import get_classification
 from src.lib.blast_result_reader import BlastResultReader
 import math
+import json
 
 def get_options():
     parser = OptionParser()
     parser.add_option("-i", "--input", dest="input_filename",
-                  help="input ASTRAL fasta", metavar="FILE")
+                  help="the output of BLAST", metavar="FILE")
     
     parser.add_option("-a", "--astral_filename", dest="astral_filename",
                   help="ASTRAL filename", metavar="FILE")
     
     parser.add_option("-n", "--number_of_false_positives", dest="number_false_positives",
                   help="the number of false positives",  action="store", type="int", default=5000)
+    
+    parser.add_option("-r", "--output_raw_data", dest="output_raw_data",
+                  help="output raw data for ROC",  action="store_true")
         
     return parser.parse_args()
 
@@ -202,7 +206,11 @@ if __name__ == '__main__':
     
     #print "n=", n 
     #print "T=", T 
-    #mean_roc, sigma_roc = compute_roc_score(blast_records, classification_map, n, T)
-    #print "mean roc ", mean_roc
-    #print "sigma roc", sigma_roc
-    print compute_roc_curve(blast_records, classification_map, n, T)
+    mean_roc, sigma_roc = compute_roc_score(blast_records, classification_map, n, T)
+    ret = {}
+    ret["mean_roc"] = mean_roc
+    ret["sigma_roc"] = sigma_roc
+    if options.output_raw_data :
+        ret["true_positive_counts"] = compute_roc_curve(blast_records, classification_map, n, T)
+    print json.dumps(ret, indent=2)
+    
