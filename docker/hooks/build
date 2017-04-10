@@ -1,7 +1,8 @@
 #!/bin/sh
 
-IMAGE_NAME=shu65/astralroc
-IMAGE=${IMAGE_NAME}:latest
-
+pwd
+printenv
 cd ../../
-docker build -t ${IMAGE} -f ./docker/Dockerfile .
+ls
+
+docker build -t ${TAG} -f ./docker/Dockerfile .
